@@ -114,6 +114,7 @@ def clone_and_create_new_branch(repo_url, initial_branch):
         repo.git.checkout('-b', new_branch_name)
         return new_branch_name, repo_path
     except GitCommandError as e:
+        print(e)
         return "Failed to switch to new branch: " + str(e)
 
 def git_add_commit_push(repo_path, commit_message):
