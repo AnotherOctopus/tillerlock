@@ -15,6 +15,7 @@ def process_comment(payload):
     print(file_to_update)
     existing_code =read_file(file_to_update)
     new_code = existing_code.replace("add_two_numbers", "multiply_two_numbers")
+    new_code = new_code.replace("help tiller", "modify help tiller")
 
     overwrite_file(file_to_update, new_code)
     git_add_commit_push(directory, new_branch_name)
