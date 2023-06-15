@@ -8,6 +8,8 @@ import openai
 
 LOGGER = logging.getLogger(__name__)
 
+def multiply_these_numbers(a, b):
+    return a * b
 
 def should_generate_fix(payload):
     comment_body = payload["comment"]["body"]
