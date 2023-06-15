@@ -8,9 +8,6 @@ import openai
 
 LOGGER = logging.getLogger(__name__)
 
-def multiply_these_numbers(a, b):
-    return a * b
-
 def should_generate_fix(payload):
     comment_body = payload["comment"]["body"]
     if "help tiller" in comment_body.lower():
@@ -45,6 +42,8 @@ def process_comment(payload):
 
     notify_pr_commenter_of_proposal(pr_number, comment_id, pull_request_message)
 
+def add_these_numbers(num1, num2):
+    return num1 + num2
 
 # write me a function that reads the contexts of a file and returns a string
 def read_file(file_path):
