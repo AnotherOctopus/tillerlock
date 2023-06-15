@@ -7,7 +7,15 @@ import openai
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
+def should_generate_fix(payload):
+    comment_body = payload["comment"]["body"]
+    if comment_body.contains("help tiller"):
+        return True
+    return False
+
 def process_comment(payload):
+    if not should_generate_fix(payload):
+        return
     ssh_url = payload["pull_request"]["head"]['repo']['ssh_url']
     source_branch_name = payload["pull_request"]["head"]["ref"]
     commented_on_file = payload["comment"]["path"]
