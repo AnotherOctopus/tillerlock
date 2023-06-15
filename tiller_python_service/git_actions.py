@@ -21,7 +21,7 @@ def clone_repo(url):
     repo_name = url.split("/")[-1].replace(".git", "")
     full_repo_path = os.path.join(target_dir, repo_name)
 
-    result = subprocess.run(["git", "clone", url, full_repo_path])
+    result = subprocess.run(["git", "clone", url, full_repo_path], capture_output=True, text=True)
 
     if result.returncode != 0:
         print(f"Error cloning the repository. Return code: {result.returncode}")
@@ -32,7 +32,8 @@ def clone_repo(url):
 def git_add_all(repo_path):
     try:
         repo = Repo(repo_path)
-        repo.git.add(A=True)  # Adds all changes
+        repo.index.add(repo.untracked_files)
+        repo.index.add([diff.a_path for diff in repo.index.diff(None)])
         return "All files added successfully"
     except GitCommandError as e:
         return str(e)
