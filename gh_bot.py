@@ -2,7 +2,7 @@
 from github import Github, GithubIntegration
 from static_vals import git_integration, REPO_NAME, OWNER
 
-def respond_to_pr_comment(pr_number: int, comment_id: str, body: str):
+def respond_to_pr_comment(pr_number: int, comment_id: int, body: str):
     owner = OWNER 
     repo_name = REPO_NAME 
 
