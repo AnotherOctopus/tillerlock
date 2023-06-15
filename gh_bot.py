@@ -1,6 +1,7 @@
 
 from github import Github, GithubIntegration
 from static_vals import git_integration, REPO_NAME, OWNER
+import logging
 
 def respond_to_pr_comment(pr_number: int, comment_id: int, body: str):
     owner = OWNER 
@@ -16,4 +17,4 @@ def respond_to_pr_comment(pr_number: int, comment_id: int, body: str):
     )
     repo = git_connection.get_repo(f"{owner}/{repo_name}")
     comment = repo.get_pull(pr_number).create_review_comment_reply(comment_id,body)
-    print(comment)
+    logging.info(f"Created comment {comment.id} on PR {pr_number}")
