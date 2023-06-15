@@ -176,7 +176,7 @@ def open_pull_request(repo_url, source_branch, target_branch):
 
     # If the request was successful, print the URL of the new pull request
     if response.status_code == 201:
-        print(f"Pull request created: {response.json()['html_url']}")
+        return response.json()['html_url']
     else:
         print(f"Failed to create pull request: {response.content}")
 
@@ -201,15 +201,17 @@ def parse_repo_url(repo_url):
 # print("Repository:", repository)
 
 # repo_url="git@github.com:AnotherOctopus/tillerlock.git"
-# source_branch="git-actions"
+# source_branch="test"
 # target_branch="main"
-
-# usage
-# open_pull_request(
+#
+# # usage
+# link = open_pull_request(
 #     repo_url=repo_url,
 #     source_branch=source_branch,
 #     target_branch="main"
 # )
+#
+# print(link)
 
 # branch, url = clone_and_create_new_branch("git@github.com:AnotherOctopus/tillerlock.git", "git-functions")
 # print(branch, url)
