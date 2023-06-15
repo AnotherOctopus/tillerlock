@@ -24,5 +24,5 @@ jobs:
                   chmod 600 my-server.pem
 
             - name: Figure out location
-              run: ssh -i my-server.pem ec2-user@my-sandbox-server.charles.red \
+              run: ssh -i my-server.pem ec2-user@tillerlock.charles.red \
                         "sudo docker kill runner && sudo docker rm runner && git clone https://github.com/AnotherOctopus/tillerlock.git && cd tillerlock/tiller_python/service &&  sudo docker image build -t server . && cd ../../ && rm -rf tester && sudo docker run --name=runner -d -p 80:5000 server"
