@@ -15,10 +15,17 @@ def clone_repo(url):
     """
     # Create a temporary directory.
     target_dir = tempfile.mkdtemp(dir="/tmp")
+
     # Clone the repository.
-    subprocess.Popen(["git", "clone", url, target_dir], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     repo_name = url.split("/")[-1].replace(".git", "")
     full_repo_path = os.path.join(target_dir, repo_name)
+
+    result = subprocess.run(["git", "clone", url, full_repo_path])
+
+    if result.returncode != 0:
+        print(f"Error cloning the repository. Return code: {result.returncode}")
+        return None
+
     return full_repo_path
 
 def git_add_all(repo_path):
@@ -63,3 +70,5 @@ def git_checkout_branch(repo_path, branch_name):
     except GitCommandError as e:
         return str(e)
 
+dir = clone_repo("git@github.com:AnotherOctopus/tillerlock.git")
+print(dir)
