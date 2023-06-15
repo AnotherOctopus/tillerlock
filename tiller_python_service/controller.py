@@ -1,4 +1,4 @@
-def multiply_two_numbers(a, b) -> int:
+def multiply_numbers(a, b) -> int:
     return a * b
 
 def process_comment(payload):
@@ -12,9 +12,8 @@ def process_comment(payload):
     new_branch_name, directory = clone_and_create_new_branch(ssh_url, source_branch_name)
     file_to_update = os.path.join(directory, commented_on_file)
 
-    print(file_to_update)
-    existing_code =read_file(file_to_update)
-    new_code = existing_code.replace("add_two_numbers", "multiply_two_numbers")
+    existing_code = read_file(file_to_update)
+    new_code = existing_code.replace("add_two_numbers", "multiply_numbers")
 
     overwrite_file(file_to_update, new_code)
     git_add_commit_push(directory, new_branch_name)
