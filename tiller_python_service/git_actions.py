@@ -21,6 +21,7 @@ def clone_repo(url):
     repo_name = url.split("/")[-1].replace(".git", "")
     full_repo_path = os.path.join(target_dir, repo_name)
 
+    print(["git", "clone", url, full_repo_path])
     result = subprocess.run(["git", "clone", url, full_repo_path])
 
     if result.returncode != 0:
