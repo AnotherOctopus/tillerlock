@@ -143,6 +143,7 @@ def git_add_commit_push(repo_path, commit_message):
     return "Add, commit, and push operations were successful"
 
 def open_pull_request(repo_url, source_branch, target_branch):
+    print("Opening pull request from {} to {}".format(source_branch, target_branch))
     owner, repo = parse_repo_url(repo_url)
 
     # Create the URL for the pull request
