@@ -1,0 +1,11 @@
+.idea
+*.pyc
+.pytest_cache
+__pycache__
+/*/__pycache__
+/*/*/__pycache__
+
+htmlcov
+
+.coverage
+tinker.py
