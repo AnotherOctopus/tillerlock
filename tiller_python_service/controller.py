@@ -1,9 +1,12 @@
 # from test_blob import blob
 from git_actions import clone_and_create_new_branch,git_add_commit_push,open_pull_request
+from git_actions import clone_and_create_new_branch, git_add_commit_push
 from gh_bot import notify_pr_commenter_of_proposal
+import logging
 import os
 import openai
 
+LOGGER = logging.getLogger(__name__)
 
 
 def should_generate_fix(payload):
@@ -11,6 +14,7 @@ def should_generate_fix(payload):
     if "help tiller" in comment_body.lower():
         return True
     return False
+
 
 def process_comment(payload):
     if not should_generate_fix(payload):
@@ -31,7 +35,7 @@ def process_comment(payload):
 
     overwrite_file(file_to_update, new_code)
     git_add_commit_push(directory, new_branch_name)
-    
+
     pull_request_message = open_pull_request(ssh_url, new_branch_name, source_branch_name)
 
     notify_pr_commenter_of_proposal(pr_number, comment_id, pull_request_message)
@@ -49,6 +53,7 @@ def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
     chat_completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
+        temperature=0.3
     )
 
     response = chat_completion.choices[0].message.content
@@ -62,11 +67,14 @@ def overwrite_file(file_path, new_file_contents):
 
 def _construct_prompt(comment_body, code_base, **kwargs):
     # line_number = kwargs.get("line_number")
-    prompt = f"Given the following review comment that was made as a suggestion to improve the codebase," \
+    prompt = f"Given the following review comment that was made as a suggestion to improve the codebase, " \
              f"please do your best to fix the codebase to adhere to the suggestions of the review comment." \
-             f"The comment is listed as such: \n{comment_body}\n, and the change should be made in the file below: " \
-             f"\n{code_base}\n. Your response should only include the entirety of the adjusted codebase, and no other " \
-             f"text.\n"
+             f" The comment is listed as such: \n{comment_body}\n and the change should be made in the file below: " \
+             f"`\n{code_base}\n` Your response should only include the entirety of the original codebase with replacements" \
+             f" for the recommended adjustments, and no other text, generated commentary, or unnecessary punctuation. " \
+             f"This should continue to be valid Python code, and should not add unnecessary newlines.\n" \
+             f"Be sure to scan the surrounding context in order to make a thorough and reasonable change to the codebase." \
+             f" For example, a recommended change to functionality may entail a change to the function signature. \n"
 
     prompt += "You: "
 
