@@ -112,3 +112,32 @@ def clone_and_create_new_branch(repo_url, initial_branch):
         return "Switched to new branch: " + new_branch_name
     except GitCommandError as e:
         return "Failed to switch to new branch: " + str(e)
+
+def git_add_commit_push(repo_path, commit_message):
+    """
+    Add all changes, commit them, and push to the remote repository.
+
+    Parameters:
+        repo_path (str): The full path to the local git repository.
+        commit_message (str): The commit message.
+
+    Returns:
+        str: A message about the operation's success or the error message.
+    """
+    # Add all changes
+    add_message = git_add_all(repo_path)
+    if not add_message.startswith("All files"):
+        return "Failed to add changes: " + add_message
+
+    # Commit changes
+    commit_message = git_commit(repo_path, commit_message)
+    if not commit_message.startswith("Commit"):
+        return "Failed to commit changes: " + commit_message
+
+    # Push changes
+    current_branch = Repo(repo_path).active_branch.name
+    push_message = git_push(repo_path, current_branch)
+    if not push_message.startswith("Push"):
+        return "Failed to push changes: " + push_message
+
+    return "Add, commit, and push operations were successful"
