@@ -85,14 +85,14 @@ def clone_and_create_new_branch(repo_url, initial_branch):
     Clone a repository, switch to a specified branch, and create a new branch with a random name.
 
     Examples:
-        branch = clone_and_create_new_branch("git@github.com:AnotherOctopus/tillerlock.git", "git-functions")
+        branch_name, repo_path = clone_and_create_new_branch("git@github.com:AnotherOctopus/tillerlock.git", "git-functions")
 
     Parameters:
         repo_url (str): The URL of the git repository.
         initial_branch (str): The name of the branch to switch to after cloning.
 
     Returns:
-        str: A message about the operation's success or the error message.
+        tuple: A tuple containing the branch name and repo path. If an error occurs, returns an error message.
     """
     # Clone the repo
     repo_path = clone_repo(repo_url)
@@ -109,7 +109,7 @@ def clone_and_create_new_branch(repo_url, initial_branch):
     try:
         repo = Repo(repo_path)
         repo.git.checkout('-b', new_branch_name)
-        return "Switched to new branch: " + new_branch_name
+        return new_branch_name, repo_path
     except GitCommandError as e:
         return "Failed to switch to new branch: " + str(e)
 
@@ -141,3 +141,6 @@ def git_add_commit_push(repo_path, commit_message):
         return "Failed to push changes: " + push_message
 
     return "Add, commit, and push operations were successful"
+
+# branch, url = clone_and_create_new_branch("git@github.com:AnotherOctopus/tillerlock.git", "git-functions")
+# print(branch, url)
