@@ -15,4 +15,5 @@ def respond_to_pr_comment(pr_number: int, comment_id: str, body: str):
         ).token
     )
     repo = git_connection.get_repo(f"{owner}/{repo_name}")
-    print(repo.get_pull(pr_number).comments)
+    comment = repo.get_pull(pr_number).create_review_comment_reply(comment_id,body)
+    print(comment)
