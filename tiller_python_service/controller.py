@@ -26,6 +26,8 @@ def process_comment(payload):
     pr_number = payload["pull_request"]["number"]
     comment_id = payload["comment"]["id"]
 
+    print(ssh_url, source_branch_name)
+
     new_branch_name, directory = clone_and_create_new_branch(ssh_url, source_branch_name)
     file_to_update = os.path.join(directory, commented_on_file)
 
