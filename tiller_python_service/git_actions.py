@@ -2,7 +2,10 @@ from git import Repo, GitCommandError
 import subprocess
 import tempfile
 import uuid
+import requests
+import json
 import os
+import re
 
 def clone_repo(url):
     """
@@ -142,6 +145,71 @@ def git_add_commit_push(repo_path, commit_message):
         return "Failed to push changes: " + push_message
 
     return "Add, commit, and push operations were successful"
+
+def open_pull_request(repo_url, source_branch, target_branch):
+    owner, repo = parse_repo_url(repo_url)
+
+    # Create the URL for the pull request
+    pr_url = f"https://api.github.com/repos/{owner}/{repo}/pulls"
+
+    # Get the GitHub token from the environment
+    github_token = os.getenv("GITHUB_TOKEN")
+    if github_token is None:
+        print("Please set your GitHub token in the GITHUB_TOKEN environment variable.")
+        return
+
+    # Define the headers
+    headers = {
+        "Authorization": f"token {github_token}",
+        "Accept": "application/vnd.github.v3+json",
+    }
+
+    # Define the data for the pull request
+    data = {
+        "title": f"Pull request from {source_branch} to {target_branch}",
+        "head": source_branch,
+        "base": target_branch
+    }
+
+    # Send the request to create the pull request
+    response = requests.post(pr_url, headers=headers, data=json.dumps(data))
+
+    # If the request was successful, print the URL of the new pull request
+    if response.status_code == 201:
+        print(f"Pull request created: {response.json()['html_url']}")
+    else:
+        print(f"Failed to create pull request: {response.content}")
+
+def parse_repo_url(repo_url):
+    # Pattern to match the username and repository name
+    pattern = r'github\.com:(\w+)/(\w+)\.git'
+
+    # Search for the pattern in the repo_url
+    match = re.search(pattern, repo_url)
+
+    if match:
+        username = match.group(1)
+        repository = match.group(2)
+        return username, repository
+    else:
+        return None, None
+
+# # Example usage
+# repo_url = "git@github.com:AnotherOctopus/tillerlock.git"
+# username, repository = parse_repo_url(repo_url)
+# print("Username:", username)
+# print("Repository:", repository)
+
+# repo_url="git@github.com:AnotherOctopus/tillerlock.git"
+# source_branch="git-actions"
+# target_branch="main"
+
+# usage
+# open_pull_request(
+#     repo_url=repo_url,
+#     source_branch=source_branch,
+#     target_branch="main"
+# )
 
 # branch, url = clone_and_create_new_branch("git@github.com:AnotherOctopus/tillerlock.git", "git-functions")
 # print(branch, url)
