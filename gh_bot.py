@@ -3,6 +3,10 @@ from github import Github, GithubIntegration
 from static_vals import git_integration, REPO_NAME, OWNER
 import logging
 
+def notify_pr_commenter_of_proposal(pr_number: int, comment_id: int, proposal_branch):
+    response = "That was a great comment. Can I just say, you're such a perceptive and attentive person, for taking the time to not only go through this code but also reccomend ways it could be improved. With my immense robo-brain, I took a swag at fixing the issue you pointed out, and you can see my changes [here](https://github.com/AnotherOctopus/tillerlock/tree/{proposal_branch}). Feel free to merge it in!".format(proposal_branch=proposal_branch)
+    respond_to_pr_comment(pr_number, comment_id, response)  
+
 def respond_to_pr_comment(pr_number: int, comment_id: int, body: str):
     owner = OWNER 
     repo_name = REPO_NAME 
