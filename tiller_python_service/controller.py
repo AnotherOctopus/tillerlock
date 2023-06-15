@@ -1,6 +1,5 @@
 # from test_blob import blob
-from git_actions import clone_and_create_new_branch,git_add_commit_push,open_pull_request
-from git_actions import clone_and_create_new_branch, git_add_commit_push
+from git_actions import clone_and_create_new_branch, git_add_commit_push, open_pull_request
 from gh_bot import notify_pr_commenter_of_proposal
 import logging
 import os
@@ -35,7 +34,7 @@ def process_comment(payload):
     file_to_update = os.path.join(directory, commented_on_file)
 
     print(file_to_update)
-    existing_code =read_file(file_to_update)
+    existing_code = read_file(file_to_update)
     new_code = ai_magic(comment_body, existing_code)
 
     overwrite_file(file_to_update, new_code)
@@ -70,8 +69,8 @@ def overwrite_file(file_path, new_file_contents):
     with open(file_path, "w") as f:
         f.write(new_file_contents)
 
+
 def _construct_prompt(comment_body, code_base, **kwargs):
-    # line_number = kwargs.get("line_number")
     prompt = f"Given the following review comment that was made as a suggestion to improve the codebase, " \
              f"please do your best to fix the codebase to adhere to the suggestions of the review comment." \
              f" The comment is listed as such: \n{comment_body}\n and the change should be made in the file below: " \
