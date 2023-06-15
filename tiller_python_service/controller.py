@@ -49,11 +49,10 @@ def overwrite_file(file_path, new_file_contents):
 
 def _construct_prompt(comment_body, code_base, **kwargs):
     # line_number = kwargs.get("line_number")
-    prompt = f"Given the following review comment that was made as a suggestion to improve the codebase," \
-             f"please do your best to fix the codebase to adhere to the suggestions of the review comment." \
-             f"The comment is listed as such: \n{comment_body}\n, and the change should be made in the file below: " \
-             f"\n{code_base}\n. Your response should only include the entirety of the adjusted codebase, and no other " \
-             f"text.\n"
+    prompt = f"Given the following review comment that was made as a suggestion to improve the codebase, " \
+             f"please do your best to fix the codebase to adhere to the suggestions of the review comment. " \
+             f"The comment is listed as such: {comment_body}, and the change should be made in the file below: " \
+             f"{code_base}. Your response should only include the adjusted codebase.\n"
 
     prompt += "You: "
 
