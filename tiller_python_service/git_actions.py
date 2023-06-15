@@ -5,6 +5,7 @@ import uuid
 import requests
 import json
 import os
+import re
 
 def clone_repo(url):
     """
@@ -145,7 +146,9 @@ def git_add_commit_push(repo_path, commit_message):
 
     return "Add, commit, and push operations were successful"
 
-def open_pull_request(owner, repo, source_branch, target_branch):
+def open_pull_request(repo_url, source_branch, target_branch):
+    owner, repo = parse_repo_url(repo_url)
+
     # Create the URL for the pull request
     pr_url = f"https://api.github.com/repos/{owner}/{repo}/pulls"
 
@@ -177,17 +180,36 @@ def open_pull_request(owner, repo, source_branch, target_branch):
     else:
         print(f"Failed to create pull request: {response.content}")
 
-repo_url="git@github.com:AnotherOctopus/tillerlock.git"
-source_branch="git-actions"
-target_branch="main"
+def parse_repo_url(repo_url):
+    # Pattern to match the username and repository name
+    pattern = r'github\.com:(\w+)/(\w+)\.git'
+
+    # Search for the pattern in the repo_url
+    match = re.search(pattern, repo_url)
+
+    if match:
+        username = match.group(1)
+        repository = match.group(2)
+        return username, repository
+    else:
+        return None, None
+
+# # Example usage
+# repo_url = "git@github.com:AnotherOctopus/tillerlock.git"
+# username, repository = parse_repo_url(repo_url)
+# print("Username:", username)
+# print("Repository:", repository)
+
+# repo_url="git@github.com:AnotherOctopus/tillerlock.git"
+# source_branch="git-actions"
+# target_branch="main"
 
 # usage
-open_pull_request(
-    owner="AnotherOctopus",
-    repo="tillerlock",
-    source_branch=source_branch,
-    target_branch="main"
-)
+# open_pull_request(
+#     repo_url=repo_url,
+#     source_branch=source_branch,
+#     target_branch="main"
+# )
 
 # branch, url = clone_and_create_new_branch("git@github.com:AnotherOctopus/tillerlock.git", "git-functions")
 # print(branch, url)
