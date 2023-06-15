@@ -20,15 +20,16 @@ def process_comment(payload):
     if not should_generate_fix(payload):
         return
     ssh_url = payload["pull_request"]["head"]['repo']['ssh_url']
+    clone_url = payload["pull_request"]["head"]['repo']['clone_url']
     source_branch_name = payload["pull_request"]["head"]["ref"]
     commented_on_file = payload["comment"]["path"]
     comment_body = payload["comment"]["body"]
     pr_number = payload["pull_request"]["number"]
     comment_id = payload["comment"]["id"]
 
-    print(ssh_url, source_branch_name)
+    print(clone_url, source_branch_name)
 
-    new_branch_name, directory = clone_and_create_new_branch(ssh_url, source_branch_name)
+    new_branch_name, directory = clone_and_create_new_branch(clone_url, source_branch_name)
     file_to_update = os.path.join(directory, commented_on_file)
 
     print(file_to_update)
