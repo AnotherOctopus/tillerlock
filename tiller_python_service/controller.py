@@ -1,15 +1,6 @@
-# from test_blob import blob
-from git_actions import clone_and_create_new_branch,git_add_commit_push,open_pull_request
-from gh_bot import notify_pr_commenter_of_proposal
-import os
-import openai
+def multiply_two_numbers(a, b) -> int:
+    return a * b
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-
-def add_two_numbers(a, b) -> int:
-    return a + b
-    
 def process_comment(payload):
     ssh_url = payload["pull_request"]["head"]['repo']['ssh_url']
     source_branch_name = payload["pull_request"]["head"]["ref"]
@@ -23,7 +14,7 @@ def process_comment(payload):
 
     print(file_to_update)
     existing_code =read_file(file_to_update)
-    new_code = ai_magic(comment_body, existing_code)
+    new_code = existing_code.replace("add_two_numbers", "multiply_two_numbers")
 
     overwrite_file(file_to_update, new_code)
     git_add_commit_push(directory, new_branch_name)
