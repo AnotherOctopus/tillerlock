@@ -25,8 +25,11 @@ def clone_repo(url):
     # Clone the repository.
     repo_name = url.split("/")[-1].replace(".git", "")
     full_repo_path = os.path.join(target_dir, repo_name)
-    git.Repo.clone_from(url, full_repo_path, env={'GIT_TOKEN': GITHUB_TOKEN})
+    result = subprocess.run(["git", "clone", url, full_repo_path])
 
+    if result.returncode != 0:
+        print(f"Error cloning the repository. Return code: {result.returncode}")
+        return None
     return full_repo_path
 
 def git_add_all(repo_path):
