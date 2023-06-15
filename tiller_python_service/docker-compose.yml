@@ -1,0 +1,20 @@
+version: "3.4"
+
+services:
+  custody:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: tiller-python-service
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_DEBUG=${FLASK_DEBUG:-1}
+    stdin_open: true
+    tty: true
+  postgres:
+    image: "postgres"
+    container_name: postgres
