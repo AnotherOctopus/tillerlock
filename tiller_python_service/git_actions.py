@@ -25,7 +25,8 @@ def clone_repo(url):
     # Clone the repository.
     repo_name = url.split("/")[-1].replace(".git", "")
     full_repo_path = os.path.join(target_dir, repo_name)
-    result = subprocess.run(["git", "clone", url, full_repo_path])
+    clone_url = url.replace("https://", f"https://x-access-token:{GITHUB_TOKEN}@")
+    result = subprocess.run(["git", "clone", clone_url, full_repo_path])
 
     if result.returncode != 0:
         print(f"Error cloning the repository. Return code: {result.returncode}")
