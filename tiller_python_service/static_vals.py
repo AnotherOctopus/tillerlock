@@ -3,7 +3,7 @@ from github import Github, GithubIntegration
 
 REPO_NAME="tillerlock"
 OWNER="AnotherOctopus"
-BOT_PRIV_KEY="/Users/charlesli/sandbox/tillerlock/tillerlock-bot.2023-06-15.private-key.pem"
+BOT_PRIV_KEY="tillerlock-bot.2023-06-15.private-key.pem"
 APP_ID = '348063'
 
 with open(

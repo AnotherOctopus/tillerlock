@@ -1,9 +1,12 @@
 # from test_blob import blob
 from git_actions import clone_and_create_new_branch,git_add_commit_push,open_pull_request
+from git_actions import clone_and_create_new_branch, git_add_commit_push
 from gh_bot import notify_pr_commenter_of_proposal
+import logging
 import os
 import openai
 
+LOGGER = logging.getLogger(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
@@ -12,6 +15,7 @@ def should_generate_fix(payload):
     if comment_body.contains("help tiller"):
         return True
     return False
+
 
 def process_comment(payload):
     if not should_generate_fix(payload):
@@ -32,7 +36,7 @@ def process_comment(payload):
 
     overwrite_file(file_to_update, new_code)
     git_add_commit_push(directory, new_branch_name)
-    
+
     pull_request_message = open_pull_request(ssh_url, new_branch_name, source_branch_name)
 
     notify_pr_commenter_of_proposal(pr_number, comment_id, pull_request_message)
