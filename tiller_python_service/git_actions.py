@@ -1,4 +1,6 @@
 from git import Repo, GitCommandError
+import git
+from static_vals import GITHUB_TOKEN 
 import subprocess
 import tempfile
 import uuid
@@ -23,13 +25,7 @@ def clone_repo(url):
     # Clone the repository.
     repo_name = url.split("/")[-1].replace(".git", "")
     full_repo_path = os.path.join(target_dir, repo_name)
-
-    print(["git", "clone", url, full_repo_path])
-    result = subprocess.run(["git", "clone", url, full_repo_path])
-
-    if result.returncode != 0:
-        print(f"Error cloning the repository. Return code: {result.returncode}")
-        return None
+    git.Repo.clone_from(url, full_repo_path, env={'GIT_TOKEN': GITHUB_TOKEN})
 
     return full_repo_path
 
@@ -153,7 +149,7 @@ def open_pull_request(repo_url, source_branch, target_branch):
     pr_url = f"https://api.github.com/repos/{owner}/{repo}/pulls"
 
     # Get the GitHub token from the environment
-    github_token = os.getenv("GITHUB_TOKEN")
+    github_token = GITHUB_TOKEN
     if github_token is None:
         print("Please set your GitHub token in the GITHUB_TOKEN environment variable.")
         return
