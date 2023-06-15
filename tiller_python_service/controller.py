@@ -4,12 +4,11 @@ from gh_bot import notify_pr_commenter_of_proposal
 import os
 import openai
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 def should_generate_fix(payload):
     comment_body = payload["comment"]["body"]
-    if comment_body.contains("help tiller"):
+    if "help tiller" in comment_body.lower():
         return True
     return False
 
