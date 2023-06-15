@@ -15,7 +15,8 @@ def process_comment(payload):
     branch_name, directory = clone_and_create_new_branch(repo_name, branch_name)
     file_to_update = os.path.join(directory, commented_on_file)
 
-    existing_code = os.open( file_to_update, "r").read()
+    print(file_to_update)
+    existing_code =read_file(file_to_update)
     new_code = ai_magic(comment_body, existing_code)
 
     overwrite_file(file_to_update, new_code)
@@ -25,7 +26,15 @@ def process_comment(payload):
 
     
 def ai_magic(comment_body, full_codebase_to_modify) -> str:
-   full_codebase_to_modify 
+    return """
+    def foo():
+        return 1
+    """
+
+#write me a function that reads the contexts of a file and returns a string
+def read_file(file_path):
+    with open(file_path, "r") as f:
+        return f.read()
 
 def overwrite_file(file_path, new_file_contents):
     with open(file_path, "w") as f:
