@@ -29,7 +29,7 @@ def process_comment(payload):
 
     print(clone_url, source_branch_name)
 
-    new_branch_name, directory = clone_and_create_new_branch(clone_url, source_branch_name)
+    new_branch_name, directory = clone_and_create_new_branch(ssh_url, source_branch_name)
     file_to_update = os.path.join(directory, commented_on_file)
 
     print(file_to_update)
