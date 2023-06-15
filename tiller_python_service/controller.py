@@ -11,12 +11,16 @@ def process_comment(payload):
     comment_body = payload["comment"]["body"]
     pr_number = payload["pull_request"]["number"]
     comment_id = payload["comment"]["id"]
+    pr_title = payload["pull_request"]["title"]
+
+    ticket_name = regex_out_ticket_name(pr_title)
+    jira_ticket_body = get_jira_ticket_body(ticket_name)
 
     branch_name, directory = clone_and_create_new_branch(repo_name, branch_name)
     file_to_update = os.path.join(directory, commented_on_file)
 
     existing_code = os.open( file_to_update, "r").read()
-    new_code = ai_magic(comment_body, existing_code)
+    new_code = ai_magic(comment_body, existing_code, jira_ticket_body)
 
     overwrite_file(file_to_update, new_code)
     git_add_commit_push(directory, branch_name)
@@ -24,7 +28,12 @@ def process_comment(payload):
     notify_pr_commenter_of_proposal(pr_number, comment_id, branch_name)
 
     
-def ai_magic(comment_body, full_codebase_to_modify) -> str:
+def regex_out_ticket_name(pr_title) -> str:
+    pass
+def get_jira_ticket_body(ticket_name) -> str:
+    pass
+
+def ai_magic(comment_body, full_codebase_to_modify, jira_ticket_body) -> str:
    full_codebase_to_modify 
 
 def overwrite_file(file_path, new_file_contents):
