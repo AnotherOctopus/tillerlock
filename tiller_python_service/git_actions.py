@@ -145,10 +145,7 @@ def git_add_commit_push(repo_path, commit_message):
 
     return "Add, commit, and push operations were successful"
 
-def open_pull_request(repo_url, source_branch, target_branch):
-    # Extract the owner and repo name from the URL
-    owner, repo = repo_url.split('/')[-2:]
-
+def open_pull_request(owner, repo, source_branch, target_branch):
     # Create the URL for the pull request
     pr_url = f"https://api.github.com/repos/{owner}/{repo}/pulls"
 
@@ -181,12 +178,13 @@ def open_pull_request(repo_url, source_branch, target_branch):
         print(f"Failed to create pull request: {response.content}")
 
 repo_url="git@github.com:AnotherOctopus/tillerlock.git"
-source_branch="git-functions"
+source_branch="git-actions"
 target_branch="main"
 
 # usage
 open_pull_request(
-    repo_url=repo_url,
+    owner="AnotherOctopus",
+    repo="tillerlock",
     source_branch=source_branch,
     target_branch="main"
 )
