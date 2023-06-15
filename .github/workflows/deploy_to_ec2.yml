@@ -1,0 +1,28 @@
+name: deploy_image_to_ec2
+
+on:
+    push:
+        branches: [main]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Add SSH key
+              env:
+                  SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+              run: |
+                  mkdir -p /home/runner/.ssh
+                  # Replace example.com with the hostname of the machine
+                  # you're SSH-ing into
+                  ssh-keyscan tillerlock.charles.red >> /home/runner/.ssh/known_hosts
+                  # DOKKU_SSH_KEY is the name of the repository secret
+                  echo "${{ secrets.SANDBOX_EC2_SSH_KEY }}" > my-server.pem
+                  chmod 600 my-server.pem
+
+            - name: Figure out location
+              run: ssh -i my-server.pem ec2-user@tillerlock.charles.red \
+                        "sudo docker kill runner && sudo docker rm runner && git clone https://github.com/AnotherOctopus/tillerlock.git && cd tillerlock/tiller_python_service &&  sudo docker image build -t server . && cd ../../ && rm -rf tillerlock && sudo docker run --name=runner -d -p 80:5000 server"
