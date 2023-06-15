@@ -5,7 +5,7 @@ from gh_bot import notify_pr_commenter_of_proposal
 import os
 import openai
 
-openai.api_key = "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"
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 def process_comment(payload):
