@@ -7,8 +7,8 @@ import openai
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-def add_two_numbers(a, b) -> int:
-    return a + b
+def multiply_two_numbers(a, b) -> int:
+    return a * b
     
 def process_comment(payload):
     ssh_url = payload["pull_request"]["head"]['repo']['ssh_url']
