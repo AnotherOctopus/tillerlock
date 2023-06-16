@@ -29,6 +29,9 @@ def my_new_sorting_function(arr):
             # can just exit the main loop.
             return
 
+def my_new_sorting_function(arr):
+    return sorted(arr)
+
 class ValidationError(Exception):
     pass
 
