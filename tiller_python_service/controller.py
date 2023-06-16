@@ -102,15 +102,15 @@ def _construct_prompt(comment_body, code_base, **kwargs):
     line_number = kwargs.get("line_number")
     line_number_prompt = "" if not line_number else f" around line {str(line_number)}"
     prompt = (
-        f"Given the following review comment that was made as a suggestion to improve the codebase, "
+        f"Given the following review comment that was made as a suggestion to improve the codebase,"
         f"please do your best to fix the codebase to adhere to the suggestions of the review comment."
-        f" The comment is listed as such: \n{comment_body}\n and the change should be made in the file below, "
-        f"{line_number_prompt}: "
-        f"`\n{code_base}\n` Your response should only include the entirety of the original codebase with replacements"
-        f" for the recommended adjustments - no other text, generated commentary, or unnecessary punctuation should be present. "
+        f"The comment is listed as such:\n{comment_body}\nand the change should be made in the file below,"
+        f"{line_number_prompt}:"
+        f"`\n{code_base}\n`Your response should only include the entirety of the original codebase with replacements"
+        f"for the recommended adjustments - no other text, generated commentary, or unnecessary punctuation should be present."
         f"This should continue to be valid Python code, and should not add unnecessary newlines.\n"
         f"Be sure to scan the surrounding context in order to make a thorough and reasonable change to the codebase."
-        f" For example, a recommended change to functionality may entail a change to the function signature. \n"
+        f"For example, a recommended change to functionality may entail a change to the function signature.\n"
     )
 
     prompt += "You: "
