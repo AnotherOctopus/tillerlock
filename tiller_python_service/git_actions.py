@@ -1,6 +1,6 @@
 from git import Repo, GitCommandError
 import git
-from static_vals import GITHUB_TOKEN 
+from static_vals import GITHUB_TOKEN
 import subprocess
 import tempfile
 import uuid
