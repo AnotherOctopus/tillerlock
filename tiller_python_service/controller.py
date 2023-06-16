@@ -5,8 +5,16 @@ from gh_bot import notify_pr_commenter_of_proposal
 import logging
 import os
 import openai
+import ast
 
 LOGGER = logging.getLogger(__name__)
+
+def is_valid_python(code):
+   try:
+       ast.parse(code)
+   except SyntaxError:
+       return False
+   return True
 
 def multiply_these_numbers(a, b):
     return a * b
@@ -53,17 +61,24 @@ def read_file(file_path):
 
 
 def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
+    print("starting ai magic......")
     prompt = _construct_prompt(comment_body, full_codebase_to_modify, kwargs=kwargs)
 
-    chat_completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.3
-    )
+    while True:
+        print("querying chatgpt for responses")
+        chat_completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3,
+            n=5
+        )
 
-    response = chat_completion.choices[0].message.content
-    print(f"response: {response}")
-    return response
+        for responses in chat_completion.choices:
+            if is_valid_python(responses.message.content):
+                response = responses.message.content
+                print(f"response: {response}")
+                return response
+        print("none of the responses were valid python, retrying...")
 
 
 def overwrite_file(file_path, new_file_contents):
