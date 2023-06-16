@@ -1,6 +1,6 @@
 from git import Repo, GitCommandError
 import git
-from static_vals import GITHUB_TOKEN 
+from static_vals import GITHUB_TOKEN, REPO_NAME, OWNER
 import subprocess
 import tempfile
 import uuid
@@ -9,6 +9,22 @@ import json
 import os
 import re
 import openai
+
+
+def call_gh_api_for_pr_info(pr_number):
+    """
+    Call the GitHub API to get information about a pull request.
+
+    Parameters:
+        pr_number (int): The number of the pull request.
+
+    Returns:
+        dict: The response from the GitHub API.
+    """
+    url = f"https://api.github.com/repos/{OWNER}/{REPO_NAME}/pulls/{pr_number}"
+    headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+    response = requests.get(url, headers=headers)
+    return response.json()
 
 def clone_repo(url):
     """
