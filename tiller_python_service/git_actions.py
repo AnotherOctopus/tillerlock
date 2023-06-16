@@ -1,3 +1,4 @@
+import logging
 from git import Repo, GitCommandError
 import git
 from static_vals import GITHUB_TOKEN 
@@ -8,6 +9,8 @@ import requests
 import json
 import os
 import re
+
+logging.basicConfig(filename='example.log', level=logging.INFO)
 
 def clone_repo(url):
     """
@@ -29,7 +32,7 @@ def clone_repo(url):
     result = subprocess.run(["git", "clone", clone_url, full_repo_path])
 
     if result.returncode != 0:
-        print(f"Error cloning the repository. Return code: {result.returncode}")
+        logging.error(f"Error cloning the repository. Return code: {result.returncode}")
         return None
     return full_repo_path
 
@@ -115,7 +118,7 @@ def clone_and_create_new_branch(repo_url, initial_branch):
         repo.git.checkout('-b', new_branch_name)
         return new_branch_name, repo_path
     except GitCommandError as e:
-        print(e)
+        logging.error(e)
         return "Failed to switch to new branch: " + str(e)
 
 def git_add_commit_push(repo_path, commit_message):
@@ -148,7 +151,7 @@ def git_add_commit_push(repo_path, commit_message):
     return "Add, commit, and push operations were successful"
 
 def open_pull_request(repo_url, source_branch, target_branch):
-    print("Opening pull request from {} to {}".format(source_branch, target_branch))
+    logging.info("Opening pull request from {} to {}".format(source_branch, target_branch))
     owner, repo = parse_repo_url(repo_url)
 
     # Create the URL for the pull request
@@ -157,7 +160,7 @@ def open_pull_request(repo_url, source_branch, target_branch):
     # Get the GitHub token from the environment
     github_token = GITHUB_TOKEN
     if github_token is None:
-        print("Please set your GitHub token in the GITHUB_TOKEN environment variable.")
+        logging.error("Please set your GitHub token in the GITHUB_TOKEN environment variable.")
         return
 
     # Define the headers
@@ -180,12 +183,12 @@ def open_pull_request(repo_url, source_branch, target_branch):
     if response.status_code == 201:
         return response.json()['html_url']
     else:
-        print(f"Failed to create pull request: {response.content}")
+        logging.error(f"Failed to create pull request: {response.content}")
 
 def merge_pull_request(pull_request_url, commit_title, commit_message, merge_method='merge'):
     owner, repo, pull_number = parse_pull_request_url(pull_request_url)
     url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pull_number}/merge"
-    print("merging: ", url)
+    logging.info("merging: ", url)
     github_token = os.getenv("GITHUB_TOKEN")
     headers = {
         'Authorization': f"token {github_token}",
@@ -198,9 +201,9 @@ def merge_pull_request(pull_request_url, commit_title, commit_message, merge_met
     }
     response = requests.put(url, headers=headers, data=json.dumps(data))
     if response.status_code == 200:
-        print('Pull request merged successfully.')
+        logging.info('Pull request merged successfully.')
     else:
-        print(f'Failed to merge pull request. Response: {response.content}')
+        logging.error(f'Failed to merge pull request. Response: {response.content}')
 
 def multiply_two_numbers(number_1, b):
     return number_1 * b
@@ -237,8 +240,8 @@ def parse_pull_request_url(pull_request_url):
 # Example usage
 # repo_url = "git@github.com:AnotherOctopus/tillerlock.git"
 # username, repository = parse_repo_url(repo_url)
-# print("Username:", username)
-# print("Repository:", repository)
+# logging.info("Username:", username)
+# logging.info("Repository:", repository)
 
 # repo_url="git@github.com:AnotherOctopus/tillerlock.git"
 # source_branch="branch-fcdf932e-9134-489c-95bd-80e3061d598b"
@@ -251,11 +254,9 @@ def parse_pull_request_url(pull_request_url):
 #     target_branch="main"
 # )
 #
-# print(link)
+# logging.info(link)
 
 # link = 'https://github.com/AnotherOctopus/tillerlock/pull/10'
 
 # branch, url = clone_and_create_new_branch("git@github.com:AnotherOctopus/tillerlock.git", "git-functions")
-# print(branch, url)
-
-# merge_pull_request(link, "title", "message")
+# logging.info
