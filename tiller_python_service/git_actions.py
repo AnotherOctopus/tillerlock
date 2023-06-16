@@ -205,6 +205,7 @@ def open_pull_request(repo_url, source_branch, target_branch):
             "body": body
         }
         # Send the request to create the pull request
+        print(f"Updating body of pull request {pr_number}")
         requests.post(pr_url + f"/{pr_number}", headers=headers, data=json.dumps(body_update_data))
 
         return response.json()['html_url']
