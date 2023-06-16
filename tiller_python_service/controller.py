@@ -29,10 +29,10 @@ def check_if_other_files_referenced(comment_body):
     additional_files = []
     if "```" in comment_body:
         tick_index = [m.start() for m in re.finditer("```", comment_body)]
-        if tick_index < 2:
+        if len(tick_index) < 2:
             print("Only found one set of ticks")
 
-        elif (tick_index % 2) != 0:
+        elif (len(tick_index) % 2) != 0:
             print("Found and odd number of ticks")
 
         else: # there are code blocks
