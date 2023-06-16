@@ -90,7 +90,7 @@ def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
             if is_valid_python(msg):
                 response = msg
                 print(f"response: {msg}")
-                return msg
+                return msg + "\n"
         print("none of the responses were valid python, retrying...")
 
 
