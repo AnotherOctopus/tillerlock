@@ -12,29 +12,35 @@ import ast
 
 LOGGER = logging.getLogger(__name__)
 
-def my_new_sort(arr):
-    n = len(arr)
-    # optimize code, so if the array is already sorted, it doesn't need
-    # to go through the entire process
-    swapped = False
-    # Traverse through all array elements
-    for i in range(n-1):
-        # range(n) also work but outer loop will
-        # repeat one time more than needed.
-        # Last i elements are already in place
-        for j in range(0, n-i-1):
+def merge_sort(arr):
+    if len(arr) > 1:
+        mid = len(arr)//2
+        L = arr[:mid]
+        R = arr[mid:]
  
-            # traverse the array from 0 to n-i-1
-            # Swap if the element found is greater
-            # than the next element
-            if arr[j] > arr[j + 1]:
-                swapped = True
-                arr[j], arr[j + 1] = arr[j + 1], arr[j]
-         
-        if not swapped:
-            # if we haven't needed to make a single swap, we
-            # can just exit the main loop.
-            return
+        merge_sort(L)
+        merge_sort(R)
+ 
+        i = j = k = 0
+ 
+        while i < len(L) and j < len(R):
+            if L[i] < R[j]:
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+ 
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+ 
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
 
 def is_valid_python(code):
     try:
@@ -109,7 +115,7 @@ def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
         )
         print(chat_completion)
         for response in chat_completion.choices:
-            msg = response.message.content.replace("```", "")
+            msg = response.message.content.replace("", "")
             if is_valid_python(msg):
                 response = msg
                 print(f"response: {msg}")
