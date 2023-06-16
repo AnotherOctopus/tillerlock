@@ -118,3 +118,7 @@ def _construct_prompt(comment_body, code_base, **kwargs):
     prompt += "You: "
 
     return prompt
+
+
+def _empty():
+    pass
