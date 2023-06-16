@@ -10,35 +10,41 @@ import os
 import re
 import openai
 
-def my_sorting_function(arr):
-    n = len(arr)
-    # optimize code, so if the array is already sorted, it doesn't need
-    # to go through the entire process
-    swapped = False
-    # Traverse through all array elements
-    for i in range(n-1):
-        # range(n) also work but outer loop will
-        # repeat one time more than needed.
-        # Last i elements are already in place
-        for j in range(0, n-i-1):
- 
-            # traverse the array from 0 to n-i-1
-            # Swap if the element found is greater
-            # than the next element
-            if arr[j] > arr[j + 1]:
-                swapped = True
-                arr[j], arr[j + 1] = arr[j + 1], arr[j]
-         
-        if not swapped:
-            # if we haven't needed to make a single swap, we
-            # can just exit the main loop.
-            return
+def merge_sort(arr):
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        left_half = arr[:mid]
+        right_half = arr[mid:]
+
+        merge_sort(left_half)
+        merge_sort(right_half)
+
+        i = j = k = 0
+
+        while i < len(left_half) and j < len(right_half):
+            if left_half[i] < right_half[j]:
+                arr[k] = left_half[i]
+                i += 1
+            else:
+                arr[k] = right_half[j]
+                j += 1
+            k += 1
+
+        while i < len(left_half):
+            arr[k] = left_half[i]
+            i += 1
+            k += 1
+
+        while j < len(right_half):
+            arr[k] = right_half[j]
+            j += 1
+            k += 1
 
 def new_but_terribly_misguided_function(a) -> int:
-    sorted_list = my_sorting_function(a)
+    sorted_list = a.copy()
+    merge_sort(sorted_list)
     print(sorted_list)
     return sorted_list[0] + sorted_list[1]
-
 
 def clone_repo(url):
     """
@@ -204,114 +210,4 @@ def open_pull_request(repo_url, source_branch, target_branch):
         "base": target_branch
     }
 
-    # Send the request to create the pull request
-    response = requests.post(pr_url, headers=headers, data=json.dumps(data))
-    pr_number = response.json()['number']
-
-    # If the request was successful, print the URL of the new pull request
-    if response.status_code == 201:
-        body = "This is an AI created pull request"
-        diff_url = response.json()['diff_url']
-        diff_response = requests.get(diff_url, headers=headers)
-        print(diff_response.content)
-        if diff_response.status_code == 200:
-            print(str(diff_response.content))
-            prompt = f"""
-                Create the PR description of a pull request from {source_branch} to {target_branch}.
-                the git diff of this PR is: \n {str(diff_response.content)} \n and use it to describe what the pull request is doing
-                Include the fact that this Pull request was created by an AI
-                Say this all as if you were a pirate
-            """
-            chat_completion = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": prompt}],
-            )
-
-            body = chat_completion.choices[0].message.content
-
-        else:
-            print(f"Failed to create body")
-        body_update_data = {
-            "body": body
-        }
-        # Send the request to create the pull request
-        requests.post(pr_url + f"/{pr_number}", headers=headers, data=json.dumps(body_update_data))
-
-        return response.json()['html_url']
-    else:
-        print(f"Failed to create pull request: {response.content}")
-
-def merge_pull_request(pull_request_url, commit_title, commit_message, merge_method='merge'):
-    owner, repo, pull_number = parse_pull_request_url(pull_request_url)
-    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pull_number}/merge"
-    print("merging: ", url)
-    github_token = os.getenv("GITHUB_TOKEN")
-    headers = {
-        'Authorization': f"token {github_token}",
-        'Accept': 'application/vnd.github.v3+json',
-    }
-    data = {
-        'commit_title': commit_title,
-        'commit_message': commit_message,
-        'merge_method': merge_method,  # can be 'merge', 'squash', or 'rebase'
-    }
-    response = requests.put(url, headers=headers, data=json.dumps(data))
-    if response.status_code == 200:
-        print('Pull request merged successfully.')
-    else:
-        print(f'Failed to merge pull request. Response: {response.content}')
-
-def parse_repo_url(repo_url):
-    # Pattern to match the username and repository name
-    pattern = r'github\.com:(\w+)/(\w+)\.git'
-
-    # Search for the pattern in the repo_url
-    match = re.search(pattern, repo_url)
-
-    if match:
-        username = match.group(1)
-        repository = match.group(2)
-        return username, repository
-    else:
-        return None, None
-
-def parse_pull_request_url(pull_request_url):
-    # Pattern to match the username and repository name
-    pattern = r'github\.com\/(\w+)/(\w+)\/pull\/(\w+)'
-
-    # Search for the pattern in the repo_url
-    match = re.search(pattern, pull_request_url)
-
-    if match:
-        username = match.group(1)
-        repository = match.group(2)
-        pull_number = match.group(3)
-        return username, repository, pull_number
-    else:
-        return None, None, None
-
-# # Example usage
-# repo_url = "git@github.com:AnotherOctopus/tillerlock.git"
-# username, repository = parse_repo_url(repo_url)
-# print("Username:", username)
-# print("Repository:", repository)
-
-# repo_url="git@github.com:AnotherOctopus/tillerlock.git"
-# source_branch="branch-fcdf932e-9134-489c-95bd-80e3061d598b"
-# target_branch="some-change"
-#
-# usage
-# link = open_pull_request(
-#     repo_url=repo_url,
-#     source_branch=source_branch,
-#     target_branch="main"
-# )
-#
-# print(link)
-
-# link = 'https://github.com/AnotherOctopus/tillerlock/pull/10'
-
-# branch, url = clone_and_create_new_branch("git@github.com:AnotherOctopus/tillerlock.git", "git-functions")
-# print(branch, url)
-
-# merge_pull_request(link, "title", "message")
+    # Send the
