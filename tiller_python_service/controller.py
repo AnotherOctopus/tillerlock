@@ -17,6 +17,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def is_valid_python(code):
+    print("Checking if valid python")
     try:
         ast.parse(code)
     except SyntaxError:
@@ -80,6 +81,7 @@ def process_comment(payload):
     comment_line = payload.get("comment").get("line")
     pull_request_url = payload["pull_request"]["url"]
     title = payload["pull_request"]["title"]
+    print("Processing comment", comment_body)
 
     if should_merge(payload):
         merge_pull_request(pull_request_url, "merged tiller suggestion", "merged tiller suggestion")
@@ -146,6 +148,7 @@ def overwrite_file(file_path, new_file_contents):
 
 
 def _construct_prompt(comment_body, code_base, jira_info, **kwargs):
+    print("Constructing prompt for ", jira_info)
     line_number = kwargs.get("line_number")
     line_number_prompt = "" if not line_number else f" around line {str(line_number)}"
 
