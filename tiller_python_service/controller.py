@@ -12,7 +12,7 @@ import ast
 
 LOGGER = logging.getLogger(__name__)
 
-def bubbleSort(arr):
+def my_new_sort(arr):
     n = len(arr)
     # optimize code, so if the array is already sorted, it doesn't need
     # to go through the entire process
