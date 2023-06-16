@@ -1,6 +1,7 @@
 import logging
 from flask import Blueprint, request
 
+import controller
 from error_handlers import ValidationError
 
 
@@ -13,6 +14,6 @@ def update():
     if not json_data:
         raise ValidationError("Request body not supplied")
 
-    # pass json_data wherever
+    controller.process_comment(json_data)
 
     return {"status": "success"}

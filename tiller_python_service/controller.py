@@ -5,15 +5,16 @@ from git_actions import (
     open_pull_request,
 )
 from gh_bot import notify_pr_commenter_of_proposal
+import logging
 import os
 import openai
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+LOGGER = logging.getLogger(__name__)
 
 
 def should_generate_fix(payload):
     comment_body = payload["comment"]["body"]
-    if comment_body.contains("help tiller"):
+    if "help tiller" in comment_body.lower():
         return True
     return False
 
@@ -21,7 +22,9 @@ def should_generate_fix(payload):
 def process_comment(payload):
     if not should_generate_fix(payload):
         return
+
     ssh_url = payload["pull_request"]["head"]["repo"]["ssh_url"]
+    clone_url = payload["pull_request"]["head"]["repo"]["clone_url"]
     source_branch_name = payload["pull_request"]["head"]["ref"]
     commented_on_file = payload["comment"]["path"]
     comment_body = payload["comment"]["body"]
@@ -29,8 +32,10 @@ def process_comment(payload):
     comment_id = payload["comment"]["id"]
     comment_line = payload.get("comment").get("line")
 
+    print(clone_url, source_branch_name)
+
     new_branch_name, directory = clone_and_create_new_branch(
-        ssh_url, source_branch_name
+        clone_url, source_branch_name
     )
     file_to_update = os.path.join(directory, commented_on_file)
 
@@ -46,6 +51,10 @@ def process_comment(payload):
     )
 
     notify_pr_commenter_of_proposal(pr_number, comment_id, pull_request_message)
+
+
+def add_these_numbers(num1, num2):
+    return num1 + num2
 
 
 # write me a function that reads the contexts of a file and returns a string

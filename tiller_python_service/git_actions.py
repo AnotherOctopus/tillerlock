@@ -1,4 +1,6 @@
 from git import Repo, GitCommandError
+import git
+from static_vals import GITHUB_TOKEN 
 import subprocess
 import tempfile
 import uuid
@@ -23,14 +25,12 @@ def clone_repo(url):
     # Clone the repository.
     repo_name = url.split("/")[-1].replace(".git", "")
     full_repo_path = os.path.join(target_dir, repo_name)
-
-    print(["git", "clone", url, full_repo_path])
-    result = subprocess.run(["git", "clone", url, full_repo_path])
+    clone_url = url.replace("https://", f"https://x-access-token:{GITHUB_TOKEN}@")
+    result = subprocess.run(["git", "clone", clone_url, full_repo_path])
 
     if result.returncode != 0:
         print(f"Error cloning the repository. Return code: {result.returncode}")
         return None
-
     return full_repo_path
 
 def git_add_all(repo_path):
@@ -115,6 +115,7 @@ def clone_and_create_new_branch(repo_url, initial_branch):
         repo.git.checkout('-b', new_branch_name)
         return new_branch_name, repo_path
     except GitCommandError as e:
+        print(e)
         return "Failed to switch to new branch: " + str(e)
 
 def git_add_commit_push(repo_path, commit_message):
@@ -147,13 +148,14 @@ def git_add_commit_push(repo_path, commit_message):
     return "Add, commit, and push operations were successful"
 
 def open_pull_request(repo_url, source_branch, target_branch):
+    print("Opening pull request from {} to {}".format(source_branch, target_branch))
     owner, repo = parse_repo_url(repo_url)
 
     # Create the URL for the pull request
     pr_url = f"https://api.github.com/repos/{owner}/{repo}/pulls"
 
     # Get the GitHub token from the environment
-    github_token = os.getenv("GITHUB_TOKEN")
+    github_token = GITHUB_TOKEN
     if github_token is None:
         print("Please set your GitHub token in the GITHUB_TOKEN environment variable.")
         return
