@@ -11,6 +11,7 @@ import logging
 import os
 import openai
 import ast
+import re
 
 LOGGER = logging.getLogger(__name__)
 
@@ -21,6 +22,35 @@ def is_valid_python(code):
     except SyntaxError:
         return False
     return True
+
+def check_if_other_files_referenced(comment_body):
+    n = 2
+    file_types = [".py"]
+    additional_files = []
+    if "```" in comment_body:
+        tick_index = [m.start() for m in re.finditer("```", comment_body)]
+        if tick_index < 2:
+            print("Only found one set of ticks")
+
+        elif (tick_index % 2) != 0:
+            print("Found and odd number of ticks")
+
+        else: # there are code blocks
+            tick_pairs = [tick_index[i:i+n] for i in range(0, len(tick_index), n)]
+            for pair in tick_pairs:
+                start_tick = pair[0]+3
+                end_tick = pair[1]
+                codeblock = comment_body[start_tick:end_tick]
+                for file_type in file_types:
+                    if file_type in codeblock:
+                        print("Adding context file "+ codeblock)
+                        additional_files.append(codeblock)
+
+    else:
+        print("Found no code blocks in comment")
+
+    return additional_files
+
 
 
 def should_generate_fix(payload):
@@ -65,6 +95,7 @@ def process_comment(payload):
     print(file_to_update)
     existing_code = read_file(file_to_update)
     jira_info = get_ticket_info(title)
+    context_files = check_if_other_files_referenced(comment_body)
     new_code = ai_magic(comment_body, existing_code, jira_info, line_number=comment_line)
 
     overwrite_file(file_to_update, new_code)
