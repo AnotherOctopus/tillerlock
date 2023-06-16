@@ -84,7 +84,7 @@ def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
             temperature=0.3,
             n=5,
         )
-
+        print(chat_completion)
         for responses in chat_completion.choices:
             if is_valid_python(responses.message.content):
                 response = responses.message.content
