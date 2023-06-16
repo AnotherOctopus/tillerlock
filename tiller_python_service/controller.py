@@ -85,11 +85,12 @@ def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
             n=5,
         )
         print(chat_completion)
-        for responses in chat_completion.choices:
-            if is_valid_python(responses.message.content):
-                response = responses.message.content
-                print(f"response: {response}")
-                return response
+        for response in chat_completion.choices:
+            msg = response.message.content.replace("```", "")
+            if is_valid_python(msg):
+                response = msg
+                print(f"response: {msg}")
+                return msg
         print("none of the responses were valid python, retrying...")
 
 
@@ -110,6 +111,7 @@ def _construct_prompt(comment_body, code_base, **kwargs):
         f" for the recommended adjustments - no other text, generated commentary, or unnecessary punctuation should be present. "
         f"This should continue to be valid Python code, and should not add unnecessary newlines.\n"
         f"Be sure to scan the surrounding context in order to make a thorough and reasonable change to the codebase."
+        f"Do not include the comment at the top of the return message." \
         f" For example, a recommended change to functionality may entail a change to the function signature. \n"
     )
 
