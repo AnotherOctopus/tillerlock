@@ -6,6 +6,7 @@ from git_actions import (
     merge_pull_request
 )
 from gh_bot import notify_pr_commenter_of_proposal
+from jira import get_ticket_info
 import logging
 import os
 import openai
@@ -48,6 +49,7 @@ def process_comment(payload):
     comment_id = payload["comment"]["id"]
     comment_line = payload.get("comment").get("line")
     pull_request_url = payload["pull_request"]["url"]
+    title = payload["pull_request"]["title"]
 
     if should_merge(payload):
         merge_pull_request(pull_request_url, "merged tiller suggestion", "merged tiller suggestion")
@@ -62,7 +64,8 @@ def process_comment(payload):
 
     print(file_to_update)
     existing_code = read_file(file_to_update)
-    new_code = ai_magic(comment_body, existing_code, line_number=comment_line)
+    jira_info = get_ticket_info(title)
+    new_code = ai_magic(comment_body, existing_code, jira_info, line_number=comment_line)
 
     overwrite_file(file_to_update, new_code)
     git_add_commit_push(directory, new_branch_name)
@@ -84,9 +87,9 @@ def read_file(file_path):
         return f.read()
 
 
-def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
+def ai_magic(comment_body, full_codebase_to_modify, jira_info, **kwargs) -> str:
     print("starting ai magic......")
-    prompt = _construct_prompt(comment_body, full_codebase_to_modify, kwargs=kwargs)
+    prompt = _construct_prompt(comment_body, full_codebase_to_modify, jira_info, kwargs=kwargs)
 
     while True:
         print("querying chatgpt for responses")
@@ -111,12 +114,22 @@ def overwrite_file(file_path, new_file_contents):
         f.write(new_file_contents)
 
 
-def _construct_prompt(comment_body, code_base, **kwargs):
+def _construct_prompt(comment_body, code_base, jira_info, **kwargs):
     line_number = kwargs.get("line_number")
     line_number_prompt = "" if not line_number else f" around line {str(line_number)}"
+
+    if jira_info is None:
+        jira_summary = ""
+        jira_description = ""
+    else:
+        jira_summary = jira_info[0]
+        jira_description = jira_info[1]
+
     prompt = (
         f"Given the following review comment that was made as a suggestion to improve the codebase, "
         f"please do your best to fix the codebase to adhere to the suggestions of the review comment."
+        f" The original Jira ticket summary was this: \n{jira_summary}\n with this extra description: "
+        f" \n{jira_description}\n."
         f" The comment is listed as such: \n{comment_body}\n and the change should be made in the file below, "
         f"{line_number_prompt}: "
         f"`\n{code_base}\n` Your response should only include the entirety of the original codebase with replacements"
