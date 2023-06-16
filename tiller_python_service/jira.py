@@ -3,7 +3,7 @@ import json
 import base64
 import os
 
-def get_ticket_info(ticket_id):
+def get_ticket_info(ticket_title):
 
     # Base encode email and api token
     key = os.getenv("JIRA_API_KEY")
@@ -15,6 +15,10 @@ def get_ticket_info(ticket_id):
        "Content-Type": "application/json",
        "Authorization" : cred
     }
+
+    # get ticket id from title
+    colon_index = ticket_title.find(':')
+    ticket_id = ticket_title[:colon_index]
 
     # Update your site url
     url = "https://tillerlock.atlassian.net/rest/api/3/issue/" + str(ticket_id)
@@ -31,5 +35,8 @@ def get_ticket_info(ticket_id):
 
     # Decode Json string to Python
     json_data = json.loads(response.text)
+    summary = json_data['fields']['summary']
+    description = json_data['fields']['description']['content'][0]['content'][0]['text']
+    output_data = [summary, description]
 
-    return  json_data['fields']['summary']
+    return  output_data
