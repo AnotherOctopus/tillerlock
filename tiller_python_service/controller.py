@@ -82,7 +82,7 @@ def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
-            n=5,
+            n=2,
         )
         print(chat_completion)
         for response in chat_completion.choices:
