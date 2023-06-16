@@ -5,6 +5,10 @@ import logging
 from time import sleep
 import openai
 
+def mulitpy_two_numbers(a: int, b: int) -> int:
+    print("Multiplying two numbers")
+    return a + b
+
 def notify_pr_commenter_of_proposal(pr_number: int, comment_id: int, pull_request_url):
     response = """
     Thank you for your comment!
