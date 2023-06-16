@@ -1,9 +1,10 @@
-
 from github import Github, GithubIntegration
-from static_vals import REPO_NAME, OWNER, APP_ID, BOT_PRIV_KEY, GPT_MODEL
+from static_vals import REPO_NAME, OWNER, APP_ID, BOT_PRIV_KEY
 import logging
 from time import sleep
 import openai
+
+GPT_MODEL = "gpt-3.5-turbo"
 
 def notify_pr_commenter_of_proposal(pr_number: int, comment_id: int, pull_request_url):
     response = """
@@ -23,7 +24,7 @@ def notify_pr_commenter_of_proposal(pr_number: int, comment_id: int, pull_reques
         print(f"Attempting try number {6 - retry_count}")
         try:
             chat_completion = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
+                model=GPT_MODEL,
                 messages=[{"role": "user", "content": prompt}],
             )
 
