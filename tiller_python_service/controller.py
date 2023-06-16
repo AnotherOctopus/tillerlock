@@ -66,7 +66,7 @@ def add_these_numbers(num1, num2):
     return num1 + num2
 
 
-# write me a function that reads the contexts of a file and returns a string
+# write me a function that reads the contents of a file and returns a string
 def read_file(file_path):
     with open(file_path, "r") as f:
         return f.read()
@@ -78,15 +78,17 @@ def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
 
     while True:
         print("querying chatgpt for responses")
-        chat_completion = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.3,
-            n=5,
+        chat_completion = openai.Completion.create(
+            engine="davinci-codex",
+            prompt=prompt,
+            max_tokens=1024,
+            n=1,
+            stop=None,
+            temperature=0.7,
         )
         print(chat_completion)
         for response in chat_completion.choices:
-            msg = response.message.content.replace("```", "")
+            msg = response.text.replace("", "")
             if is_valid_python(msg):
                 response = msg
                 print(f"response: {msg}")
