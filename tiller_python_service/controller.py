@@ -142,4 +142,5 @@ def _construct_prompt(comment_body, code_base, jira_info, **kwargs):
 
     prompt += "You: "
 
+    print(f"Prompt being sent to chatgpt: {prompt}")
     return prompt

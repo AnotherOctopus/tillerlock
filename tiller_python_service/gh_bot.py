@@ -28,6 +28,7 @@ def notify_pr_commenter_of_proposal(pr_number: int, comment_id: int, pull_reques
             )
 
             response = chat_completion.choices[0].message.content
+            break
         except Exception as e:
             print(f"Creaeting chat completion failed with error {e}, retrying...")
             retry_count -= 1
