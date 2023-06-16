@@ -53,6 +53,8 @@ def process_comment(payload):
 
     notify_pr_commenter_of_proposal(pr_number, comment_id, pull_request_message)
 
+def add_these_numbers(num1, num2):
+    return num1 + num2
 
 # write me a function that reads the contexts of a file and returns a string
 def read_file(file_path):
