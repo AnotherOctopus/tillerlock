@@ -5,4 +5,3 @@ PyGithub==1.58.2
 pytest==7.3.1
 gitpython==3.1.31
 requests==2.31.0
-ast==3.11.4
