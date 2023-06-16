@@ -7,6 +7,7 @@ import logging
 def get_ticket_info(ticket_title):
 
     # Base encode email and api token
+    logging.info(f"Gathering ticket info on Jira")
     key = os.getenv("JIRA_API_KEY")
     user = os.getenv("JIRA_API_USER")
     cred =  "Basic " + base64.b64encode(bytes(user+":"+key, 'utf-8')).decode("utf-8")
