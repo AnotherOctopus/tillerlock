@@ -34,6 +34,30 @@ def clone_repo(url):
         return None
     return full_repo_path
 
+def real_cool_change(change):
+    print(change)
+
+# # Example usage
+# repo_url = "git@github.com:AnotherOctopus/tillerlock.git"
+# username, repository = parse_repo_url(repo_url)
+# print("Username:", username)
+# print("Repository:", repository)
+
+# repo_url="git@github.com:AnotherOctopus/tillerlock.git"
+# source_branch="branch-fcdf932e-9134-489c-95bd-80e3061d598b"
+# target_branch="some-change"
+#
+# usage
+# link = open_pull_request(
+#     repo_url=repo_url,
+#     source_branch=source_branch,
+#     target_branch="main"
+# )
+#
+# print(link)
+
+# link = 'https://github.com/AnotherOctopus/tillerlock/pull/10'
+
 def git_add_all(repo_path):
     try:
         repo = Repo(repo_path)
@@ -205,86 +229,4 @@ def open_pull_request(repo_url, source_branch, target_branch):
             "body": body
         }
         # Send the request to create the pull request
-        requests.post(pr_url + f"/{pr_number}", headers=headers, data=json.dumps(body_update_data))
-
-        return response.json()['html_url']
-    else:
-        print(f"Failed to create pull request: {response.content}")
-
-def merge_pull_request(pull_request_url, commit_title, commit_message, merge_method='merge'):
-    owner, repo, pull_number = parse_pull_request_url(pull_request_url)
-    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pull_number}/merge"
-    print("merging: ", url)
-    github_token = os.getenv("GITHUB_TOKEN")
-    headers = {
-        'Authorization': f"token {github_token}",
-        'Accept': 'application/vnd.github.v3+json',
-    }
-    data = {
-        'commit_title': commit_title,
-        'commit_message': commit_message,
-        'merge_method': merge_method,  # can be 'merge', 'squash', or 'rebase'
-    }
-    response = requests.put(url, headers=headers, data=json.dumps(data))
-    if response.status_code == 200:
-        print('Pull request merged successfully.')
-    else:
-        print(f'Failed to merge pull request. Response: {response.content}')
-
-def parse_repo_url(repo_url):
-    # Pattern to match the username and repository name
-    pattern = r'github\.com:(\w+)/(\w+)\.git'
-
-    # Search for the pattern in the repo_url
-    match = re.search(pattern, repo_url)
-
-    if match:
-        username = match.group(1)
-        repository = match.group(2)
-        return username, repository
-    else:
-        return None, None
-
-def parse_pull_request_url(pull_request_url):
-    # Pattern to match the username and repository name
-    pattern = r'github\.com\/(\w+)/(\w+)\/pull\/(\w+)'
-
-    # Search for the pattern in the repo_url
-    match = re.search(pattern, pull_request_url)
-
-    if match:
-        username = match.group(1)
-        repository = match.group(2)
-        pull_number = match.group(3)
-        return username, repository, pull_number
-    else:
-        return None, None, None
-
-def totally_cool_change(variable):
-    print(variable)
-
-# # Example usage
-# repo_url = "git@github.com:AnotherOctopus/tillerlock.git"
-# username, repository = parse_repo_url(repo_url)
-# print("Username:", username)
-# print("Repository:", repository)
-
-# repo_url="git@github.com:AnotherOctopus/tillerlock.git"
-# source_branch="branch-fcdf932e-9134-489c-95bd-80e3061d598b"
-# target_branch="some-change"
-#
-# usage
-# link = open_pull_request(
-#     repo_url=repo_url,
-#     source_branch=source_branch,
-#     target_branch="main"
-# )
-#
-# print(link)
-
-# link = 'https://github.com/AnotherOctopus/tillerlock/pull/10'
-
-# branch, url = clone_and_create_new_branch("git@github.com:AnotherOctopus/tillerlock.git", "git-functions")
-# print(branch, url)
-
-# merge_pull_request(link, "title", "message")
+        requests.post
