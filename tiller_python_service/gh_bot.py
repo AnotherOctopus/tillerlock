@@ -1,6 +1,6 @@
 
 from github import Github, GithubIntegration
-from static_vals import REPO_NAME, OWNER, APP_ID, BOT_PRIV_KEY
+from static_vals import REPO_NAME, OWNER, APP_ID, BOT_PRIV_KEY, GPT_MODEL
 import logging
 from time import sleep
 import openai
