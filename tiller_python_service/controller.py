@@ -31,10 +31,10 @@ def check_if_other_files_referenced(comment_body):
         tick_index = [m.start() for m in re.finditer("```", comment_body)]
         if tick_index < 2:
             print("Only found one set of ticks")
-            return None
+
         elif (tick_index % 2) != 0:
             print("Found and odd number of ticks")
-            return None
+
         else: # there are code blocks
             tick_pairs = [tick_index[i:i+n] for i in range(0, len(tick_index), n)]
             for pair in tick_pairs:
@@ -48,7 +48,6 @@ def check_if_other_files_referenced(comment_body):
 
     else:
         print("Found no code blocks in comment")
-        return None
 
     return additional_files
 
