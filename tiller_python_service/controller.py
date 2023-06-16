@@ -3,6 +3,7 @@ from git_actions import (
     clone_and_create_new_branch,
     git_add_commit_push,
     open_pull_request,
+    merge_pull_request
 )
 from gh_bot import notify_pr_commenter_of_proposal
 import logging
@@ -28,6 +29,12 @@ def should_generate_fix(payload):
     return False
 
 
+def should_merge(payload):
+    comment_body = payload["comment"]["body"]
+    if "lgtm tiller" in comment_body.lower():
+        return True
+    return False
+
 def process_comment(payload):
     if not should_generate_fix(payload):
         return
@@ -40,6 +47,11 @@ def process_comment(payload):
     pr_number = payload["pull_request"]["number"]
     comment_id = payload["comment"]["id"]
     comment_line = payload.get("comment").get("line")
+    pull_request_url = payload["pull_request"]["url"]
+
+    if should_merge(payload):
+        merge_pull_request(pull_request_url, "merged tiller suggestion", "merged tiller suggestion")
+        return
 
     print(clone_url, source_branch_name)
 
