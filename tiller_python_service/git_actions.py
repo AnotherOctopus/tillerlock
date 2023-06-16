@@ -260,6 +260,9 @@ def parse_pull_request_url(pull_request_url):
     else:
         return None, None, None
 
+def totally_cool_change(variable):
+    print(variable)
+
 # # Example usage
 # repo_url = "git@github.com:AnotherOctopus/tillerlock.git"
 # username, repository = parse_repo_url(repo_url)
