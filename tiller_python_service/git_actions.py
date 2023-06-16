@@ -202,9 +202,8 @@ def merge_pull_request(pull_request_url, commit_title, commit_message, merge_met
     else:
         print(f'Failed to merge pull request. Response: {response.content}')
 
-def add_two_numbers(a, b):
-    return a + b
-
+def multiply_two_numbers(a, b):
+    return a * b
 
 def parse_repo_url(repo_url):
     # Pattern to match the username and repository name
