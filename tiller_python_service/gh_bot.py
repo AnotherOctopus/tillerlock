@@ -1,13 +1,12 @@
-
 from github import Github, GithubIntegration
 from static_vals import REPO_NAME, OWNER, APP_ID, BOT_PRIV_KEY
 import logging
 from time import sleep
 import openai
 
-def mulitpy_two_numbers(a: int, b: int) -> int:
-    print("Multiplying two numbers")
-    return a + b
+def multiply_two_numbers(a: int, b: int) -> str:
+    result = a * b
+    return str(result)
 
 def notify_pr_commenter_of_proposal(pr_number: int, comment_id: int, pull_request_url):
     response = """
