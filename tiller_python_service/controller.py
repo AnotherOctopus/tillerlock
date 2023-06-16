@@ -87,9 +87,9 @@ def read_file(file_path):
         return f.read()
 
 
-def ai_magic(comment_body, full_codebase_to_modify, jira_description, **kwargs) -> str:
+def ai_magic(comment_body, full_codebase_to_modify, jira_info, **kwargs) -> str:
     print("starting ai magic......")
-    prompt = _construct_prompt(comment_body, full_codebase_to_modify, jira_description, kwargs=kwargs)
+    prompt = _construct_prompt(comment_body, full_codebase_to_modify, jira_info, kwargs=kwargs)
 
     while True:
         print("querying chatgpt for responses")
