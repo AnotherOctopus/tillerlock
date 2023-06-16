@@ -186,25 +186,13 @@ def open_pull_request(repo_url, source_branch, target_branch):
         print(diff_response.content)
         if diff_response.status_code == 200:
             print(str(diff_response.content))
-            prompt = f"""
-                Create the PR description of a pull request from {source_branch} to {target_branch}.
-                the git diff of this PR is: \n {str(diff_response.content)} \n and use it to describe what the pull request is doing
-                Include the fact that this Pull request was created by an AI
-                Say this all as if you were a pirate
-            """
-            chat_completion = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": prompt}],
-            )
-
-            body = chat_completion.choices[0].message.content
-
         else:
             print(f"Failed to create body")
         body_update_data = {
             "body": body
         }
         # Send the request to create the pull request
+        print(f"Updating body of pull request {pr_number}")
         requests.post(pr_url + f"/{pr_number}", headers=headers, data=json.dumps(body_update_data))
 
         return response.json()['html_url']

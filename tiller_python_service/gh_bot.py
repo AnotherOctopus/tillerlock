@@ -2,9 +2,15 @@
 from github import Github, GithubIntegration
 from static_vals import REPO_NAME, OWNER, APP_ID, BOT_PRIV_KEY
 import logging
+from time import sleep
 import openai
 
 def notify_pr_commenter_of_proposal(pr_number: int, comment_id: int, pull_request_url):
+    response = """
+    Thank you for your comment!
+    your comment has been passed to the Tiller AI, which has generated a fix for your comment.
+    check it out [here](pull_request_url)!
+      """
     prompt = f"""
     Create a response to a comment on a Pull Request which was made by another human engineer, which includes this link to this Pull Request which fixes it: {pull_request_url}. 
     This response must contain this link embedded in the text, linked liked in the .md format, i.e. [here](<link>).
@@ -12,12 +18,18 @@ def notify_pr_commenter_of_proposal(pr_number: int, comment_id: int, pull_reques
     Respond in pirate speak.
     Keep it in one sentence.
     """
-    chat_completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}],
-    )
+    retry_count = 5
+    while retry_count > 0:
+        try:
+            chat_completion = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": prompt}],
+            )
 
-    response = chat_completion.choices[0].message.content
+            response = chat_completion.choices[0].message.content
+        except Exception as e:
+            retry_count -= 1
+            sleep(4)
     respond_to_pr_comment(pr_number, comment_id, response)  
 
 def respond_to_pr_comment(pr_number: int, comment_id: int, body: str):
