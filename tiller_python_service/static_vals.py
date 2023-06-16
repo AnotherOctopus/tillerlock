@@ -9,8 +9,3 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 BOT_PRIV_KEY = os.getenv("BOT_PRIV_KEY")
 JIRA_API_KEY = os.getenv("JIRA_API_KEY")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-# Create an GitHub integration instance
-git_integration = GithubIntegration(
-    APP_ID,
-    BOT_PRIV_KEY,
-)

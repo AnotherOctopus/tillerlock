@@ -1,6 +1,6 @@
 
 from github import Github, GithubIntegration
-from static_vals import git_integration, REPO_NAME, OWNER
+from static_vals import REPO_NAME, OWNER, APP_ID, BOT_PRIV_KEY
 import logging
 import openai
 
@@ -23,6 +23,11 @@ def notify_pr_commenter_of_proposal(pr_number: int, comment_id: int, pull_reques
 def respond_to_pr_comment(pr_number: int, comment_id: int, body: str):
     owner = OWNER 
     repo_name = REPO_NAME 
+    # Create an GitHub integration instance
+    git_integration = GithubIntegration(
+        APP_ID,
+        BOT_PRIV_KEY,
+    )
 
     # Get a git connection as our bot
     # Here is where we are getting the permission to talk as our bot and not
