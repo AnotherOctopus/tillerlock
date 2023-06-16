@@ -17,7 +17,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def is_valid_python(code):
-    print("Checking if valid python")
+    LOGGER.info("Checking if valid python")
     try:
         ast.parse(code)
     except SyntaxError:
@@ -28,13 +28,13 @@ def check_if_other_files_referenced(comment_body):
     n = 2
     file_types = [".py"]
     additional_files = []
-    if "```" in comment_body:
-        tick_index = [m.start() for m in re.finditer("```", comment_body)]
+    if "" in comment_body:
+        tick_index = [m.start() for m in re.finditer("", comment_body)]
         if len(tick_index) < 2:
-            print("Only found one set of ticks")
+            LOGGER.info("Only found one set of ticks")
 
         elif (len(tick_index) % 2) != 0:
-            print("Found and odd number of ticks")
+            LOGGER.info("Found and odd number of ticks")
 
         else: # there are code blocks
             tick_pairs = [tick_index[i:i+n] for i in range(0, len(tick_index), n)]
@@ -44,11 +44,11 @@ def check_if_other_files_referenced(comment_body):
                 codeblock = comment_body[start_tick:end_tick]
                 for file_type in file_types:
                     if file_type in codeblock:
-                        print("Adding context file "+ codeblock)
+                        LOGGER.info("Adding context file "+ codeblock)
                         additional_files.append(codeblock)
 
     else:
-        print("Found no code blocks in comment")
+        LOGGER.info("Found no code blocks in comment")
 
     return additional_files
 
@@ -81,20 +81,20 @@ def process_comment(payload):
     comment_line = payload.get("comment").get("line")
     pull_request_url = payload["pull_request"]["url"]
     title = payload["pull_request"]["title"]
-    print("Processing comment", comment_body)
+    LOGGER.info("Processing comment", comment_body)
 
     if should_merge(payload):
         merge_pull_request(pull_request_url, "merged tiller suggestion", "merged tiller suggestion")
         return
 
-    print(clone_url, source_branch_name)
+    LOGGER.info(clone_url, source_branch_name)
 
     new_branch_name, directory = clone_and_create_new_branch(
         clone_url, source_branch_name
     )
     file_to_update = os.path.join(directory, commented_on_file)
 
-    print(file_to_update)
+    LOGGER.info(file_to_update)
     existing_code = read_file(file_to_update)
     jira_info = get_ticket_info(title)
     context_files = check_if_other_files_referenced(comment_body)
@@ -121,25 +121,25 @@ def read_file(file_path):
 
 
 def ai_magic(comment_body, full_codebase_to_modify, jira_info, **kwargs) -> str:
-    print("starting ai magic......")
+    LOGGER.info("starting ai magic......")
     prompt = _construct_prompt(comment_body, full_codebase_to_modify, jira_info, kwargs=kwargs)
 
     while True:
-        print("querying chatgpt for responses")
+        LOGGER.info("querying chatgpt for responses")
         chat_completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
             n=2,
         )
-        print(chat_completion)
+        LOGGER.info(chat_completion)
         for response in chat_completion.choices:
-            msg = response.message.content.replace("```", "")
+            msg = response.message.content.replace("", "")
             if is_valid_python(msg):
                 response = msg
-                print(f"response: {msg}")
+                LOGGER.info(f"response: {msg}")
                 return msg + "\n"
-        print("none of the responses were valid python, retrying...")
+        LOGGER.info("none of the responses were valid python, retrying...")
 
 
 def overwrite_file(file_path, new_file_contents):
@@ -148,7 +148,7 @@ def overwrite_file(file_path, new_file_contents):
 
 
 def _construct_prompt(comment_body, code_base, jira_info, **kwargs):
-    print("Constructing prompt for ", jira_info)
+    LOGGER.info("Constructing prompt for ", jira_info)
     line_number = kwargs.get("line_number")
     line_number_prompt = "" if not line_number else f" around line {str(line_number)}"
 
@@ -176,5 +176,5 @@ def _construct_prompt(comment_body, code_base, jira_info, **kwargs):
 
     prompt += "You: "
 
-    print(f"Prompt being sent to chatgpt: {prompt}")
+    LOGGER.info(f"Prompt being sent to chatgpt: {prompt}")
     return prompt
