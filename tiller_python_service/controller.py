@@ -14,6 +14,15 @@ LOGGER = logging.getLogger(__name__)
 
 
 def is_valid_python(code):
+    """
+    Check if the given code is valid Python code.
+
+    Args:
+        code (str): The code to check.
+
+    Returns:
+        bool: True if the code is valid Python code, False otherwise.
+    """
     try:
         ast.parse(code)
     except SyntaxError:
@@ -22,6 +31,15 @@ def is_valid_python(code):
 
 
 def should_generate_fix(payload):
+    """
+    Check if a fix should be generated based on the given payload.
+
+    Args:
+        payload (dict): The payload to check.
+
+    Returns:
+        bool: True if a fix should be generated, False otherwise.
+    """
     comment_body = payload["comment"]["body"]
     if "help tiller" in comment_body.lower():
         return True
@@ -29,6 +47,12 @@ def should_generate_fix(payload):
 
 
 def process_comment(payload):
+    """
+    Process a comment and generate a fix if necessary.
+
+    Args:
+        payload (dict): The payload to process.
+    """
     if not should_generate_fix(payload):
         return
 
@@ -63,16 +87,45 @@ def process_comment(payload):
 
 
 def add_these_numbers(num1, num2):
+    """
+    Add two numbers together.
+
+    Args:
+        num1 (int): The first number.
+        num2 (int): The second number.
+
+    Returns:
+        int: The sum of the two numbers.
+    """
     return num1 + num2
 
 
-# write me a function that reads the contexts of a file and returns a string
 def read_file(file_path):
+    """
+    Read the contents of a file and return it as a string.
+
+    Args:
+        file_path (str): The path to the file to read.
+
+    Returns:
+        str: The contents of the file.
+    """
     with open(file_path, "r") as f:
         return f.read()
 
 
 def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
+    """
+    Use OpenAI's GPT-3 to generate a fix for the given code based on the given comment.
+
+    Args:
+        comment_body (str): The comment to base the fix on.
+        full_codebase_to_modify (str): The code to modify.
+        **kwargs: Additional keyword arguments.
+
+    Returns:
+        str: The modified code.
+    """
     print("starting ai magic......")
     prompt = _construct_prompt(comment_body, full_codebase_to_modify, kwargs=kwargs)
 
@@ -86,7 +139,7 @@ def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
         )
         print(chat_completion)
         for response in chat_completion.choices:
-            msg = response.message.content.replace("```", "")
+            msg = response.message.content.replace("", "")
             if is_valid_python(msg):
                 response = msg
                 print(f"response: {msg}")
@@ -95,11 +148,29 @@ def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
 
 
 def overwrite_file(file_path, new_file_contents):
+    """
+    Overwrite the contents of a file with new contents.
+
+    Args:
+        file_path (str): The path to the file to overwrite.
+        new_file_contents (str): The new contents of the file.
+    """
     with open(file_path, "w") as f:
         f.write(new_file_contents)
 
 
 def _construct_prompt(comment_body, code_base, **kwargs):
+    """
+    Construct the prompt to send to OpenAI's GPT-3.
+
+    Args:
+        comment_body (str): The comment to base the prompt on.
+        code_base (str): The code to modify.
+        **kwargs: Additional keyword arguments.
+
+    Returns:
+        str: The prompt to send to OpenAI's GPT-3.
+    """
     line_number = kwargs.get("line_number")
     line_number_prompt = "" if not line_number else f" around line {str(line_number)}"
     prompt = (
