@@ -66,7 +66,7 @@ def add_these_numbers(num1, num2):
     return num1 + num2
 
 
-# write me a function that reads the contexts of a file and returns a string
+# write me a function that reads the contents of a file and returns a string
 def read_file(file_path):
     with open(file_path, "r") as f:
         return f.read()
@@ -78,19 +78,22 @@ def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
 
     while True:
         print("querying chatgpt for responses")
-        chat_completion = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}],
+        chat_completion = openai.Completion.create(
+            engine="davinci-codex",
+            prompt=prompt,
             temperature=0.3,
-            n=5,
+            max_tokens=1024,
+            n=1,
+            stop=None,
+            frequency_penalty=0,
+            presence_penalty=0,
         )
         print(chat_completion)
-        for responses in chat_completion.choices:
-            if is_valid_python(responses.message.content):
-                response = responses.message.content
-                print(f"response: {response}")
-                return response
-        print("none of the responses were valid python, retrying...")
+        response = chat_completion.choices[0].text.strip()
+        if is_valid_python(response):
+            print(f"response: {response}")
+            return response
+        print("response was not valid python, retrying...")
 
 
 def overwrite_file(file_path, new_file_contents):
