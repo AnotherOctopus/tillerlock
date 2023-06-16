@@ -1,4 +1,4 @@
-# from test_blob import blob
+# Renamed help tiller to fixer
 from git_actions import (
     clone_and_create_new_branch,
     git_add_commit_push,
@@ -23,7 +23,7 @@ def is_valid_python(code):
 
 def should_generate_fix(payload):
     comment_body = payload["comment"]["body"]
-    if "help tiller" in comment_body.lower():
+    if "fixer" in comment_body.lower():
         return True
     return False
 
@@ -86,7 +86,7 @@ def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
         )
         print(chat_completion)
         for response in chat_completion.choices:
-            msg = response.message.content.replace("```", "")
+            msg = response.message.content.replace("", "")
             if is_valid_python(msg):
                 response = msg
                 print(f"response: {msg}")
