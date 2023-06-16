@@ -72,11 +72,13 @@ def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
             n=5
         )
 
-        for responses in chat_completion.choices:
-            if is_valid_python(responses.message.content):
-                response = responses.message.content
-                print(f"response: {response}")
-                return response
+        for response in chat_completion.choices:
+            msg = response.message.content.replace("```", "")
+            print(f"{msg}")
+            if is_valid_python(msg):
+                response = msg
+                print(f"response: {msg}")
+                return msg
         print("none of the responses were valid python, retrying...")
 
 
