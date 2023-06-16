@@ -86,7 +86,7 @@ def ai_magic(comment_body, full_codebase_to_modify, **kwargs) -> str:
         )
         print(chat_completion)
         for response in chat_completion.choices:
-            msg = response.message.content.replace("```", "")
+            msg = response.message.content.replace("", "")
             if is_valid_python(msg):
                 response = msg
                 print(f"response: {msg}")
