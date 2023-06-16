@@ -11,6 +11,7 @@ import logging
 import os
 import openai
 import ast
+from static_vals import GPT_MODEL
 
 LOGGER = logging.getLogger(__name__)
 
@@ -94,7 +95,7 @@ def ai_magic(comment_body, full_codebase_to_modify, jira_info, **kwargs) -> str:
     while True:
         print("querying chatgpt for responses")
         chat_completion = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model=GPT_MODEL,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
             n=2,
