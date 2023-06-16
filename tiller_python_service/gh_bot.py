@@ -20,6 +20,7 @@ def notify_pr_commenter_of_proposal(pr_number: int, comment_id: int, pull_reques
     """
     retry_count = 5
     while retry_count > 0:
+        logging.info(f"Attempting try number {6 - retry_count}")
         try:
             chat_completion = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",

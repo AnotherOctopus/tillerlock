@@ -2,6 +2,7 @@ import requests
 import json
 import base64
 import os
+import logging
 
 def get_ticket_info(ticket_title):
 
@@ -33,6 +34,7 @@ def get_ticket_info(ticket_title):
         print(f"Error finding ticket. Return code: {response.status_code}")
         return None
 
+    logging.info(f"Found ticket {ticket_id} on Jira")
     # Decode Json string to Python
     json_data = json.loads(response.text)
     summary = json_data['fields']['summary']
